@@ -1,4 +1,4 @@
-export const drawRearHair = (p, v, bVertex, colors) => {
+export const drawRearHair_Chanel = (p, v, bVertex, colors) => {
   p.fill(colors.hair);
   p.noStroke();
 
@@ -29,7 +29,7 @@ export const drawRearHair = (p, v, bVertex, colors) => {
   p.endShape();
 };
 
-export const drawFrontHair = (p, v, bVertex, colors) => {
+export const drawFrontHair_Chanel = (p, v, bVertex, colors) => {
   p.push();
   p.fill(colors.hair);
   p.noStroke();
@@ -65,4 +65,39 @@ export const drawFrontHair = (p, v, bVertex, colors) => {
   p.triangle(50, -20, 40, -40, 40, -20);
 
   p.pop();
+};
+
+export const drawRearHair_Short = (p, v, bVertex, colors) => {
+  // Simple short hair back
+  p.fill(colors.hair);
+  p.noStroke();
+  p.arc(0, -20, 260, 280, p.PI, 0);
+};
+
+export const drawFrontHair_Short = (p, v, bVertex, colors) => {
+  p.push();
+  p.fill(colors.hair);
+  p.noStroke();
+
+  // Simple messy bangs
+  p.beginShape();
+  p.vertex(-100, -80);
+  p.quadraticVertex(-50, -20, 0, -60);
+  p.quadraticVertex(50, -20, 100, -80);
+  p.vertex(100, -150);
+  p.vertex(-100, -150);
+  p.endShape(p.CLOSE);
+
+  p.pop();
+};
+
+export const hairStyles = {
+  chanel: {
+    rear: drawRearHair_Chanel,
+    front: drawFrontHair_Chanel,
+  },
+  short: {
+    rear: drawRearHair_Short,
+    front: drawFrontHair_Short,
+  },
 };

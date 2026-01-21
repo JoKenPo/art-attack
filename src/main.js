@@ -1,18 +1,74 @@
 import "./style.css";
 import p5 from "p5";
-import { colors } from "./config/colors.js";
+import { colors as defaultColors } from "./config/colors.js";
 import { createBezierTools } from "./utils/bezierShim.js";
-import { drawRearHair, drawFrontHair } from "./components/hair.js";
-import { drawEars, drawHeadShape, drawFeatures } from "./components/face.js";
-import { drawEyes } from "./components/eyes.js";
+import { hairStyles } from "./components/hair.js";
+import {
+  drawEars,
+  drawHeadShape,
+  drawEyebrows,
+  drawNose,
+  drawMouth,
+} from "./components/face.js";
+import { eyesStyles } from "./components/eyes.js";
 
 const sketch = (p) => {
+  let avatar = {};
+
+  // Feature Options
+  const eyebrowsOptions = ["default", "thin_arched", "thick_straight"];
+  const noseOptions = ["default", "pointed", "button"];
+  const mouthOptions = ["default", "small", "wide_smile"];
+  const hairOptions = Object.keys(hairStyles);
+  const eyesOptions = Object.keys(eyesStyles);
+
+  // Palettes (Simple variations)
+  const palettes = [
+    { ...defaultColors, bg: "#cb254d", skin: "#f4c4ae", hair: "#000000" },
+    { ...defaultColors, bg: "#25cbfa", skin: "#8d5524", hair: "#2a2a2a" },
+    { ...defaultColors, bg: "#facb25", skin: "#e0ac69", hair: "#5e3a2a" },
+    { ...defaultColors, bg: "#8a25fa", skin: "#ffdbac", hair: "#e6be8a" },
+  ];
+
+  const randomizeAvatar = () => {
+    const palette = p.random(palettes);
+    avatar = {
+      colors: palette,
+      style: {
+        hair: p.random(hairOptions),
+        eyes: p.random(eyesOptions),
+        eyebrows: p.random(eyebrowsOptions),
+        nose: p.random(noseOptions),
+        mouth: p.random(mouthOptions),
+      },
+    };
+    console.log("New Avatar:", avatar.style);
+  };
+
   p.setup = () => {
-    p.createCanvas(600, 600);
+    const canvas = p.createCanvas(600, 600);
     p.pixelDensity(2);
+    randomizeAvatar();
+
+    // Add instruction overlay
+    const div = document.createElement("div");
+    div.style.position = "absolute";
+    div.style.bottom = "20px";
+    div.style.left = "50%";
+    div.style.transform = "translateX(-50%)";
+    div.style.color = "white";
+    div.style.fontFamily = "monospace";
+    div.innerText = "Click to randomize";
+    document.body.appendChild(div);
+  };
+
+  p.mousePressed = () => {
+    randomizeAvatar();
   };
 
   p.draw = () => {
+    const { colors, style } = avatar;
+
     // --- Initialize Helpers ---
     const { v, bVertex } = createBezierTools(p);
 
@@ -48,11 +104,12 @@ const sketch = (p) => {
     // --- PARALLAX LAYERS ---
 
     // 1. REAR GROUP (Deepest - Inverted Anchor)
-    // Both Rear Hair and Ears now move OPPOSITE to the face (-0.05)
-    // This creates a strong pivot point for the head rotation.
     p.push();
     p.translate(panX * -0.05, panY * -0.05);
-    drawRearHair(p, v, bVertex, colors);
+    // Draw Rear Hair based on selection
+    if (hairStyles[style.hair] && hairStyles[style.hair].rear) {
+      hairStyles[style.hair].rear(p, v, bVertex, colors);
+    }
     drawEars(p, v, bVertex, colors);
     p.pop();
 
@@ -65,14 +122,26 @@ const sketch = (p) => {
     // 4. EYES (Front - 0.12)
     p.push();
     p.translate(panX * 0.12, panY * 0.12);
-    drawEyes(p, v, bVertex, colors, trackX, trackY);
+    // Draw Eyes based on selection
+    if (eyesStyles[style.eyes]) {
+      eyesStyles[style.eyes](p, v, bVertex, colors, trackX, trackY);
+    }
     p.pop();
 
     // 5. FRONT HAIR & FEATURES (Foreground - 0.15)
     p.push();
     p.translate(panX * 0.15, panY * 0.15);
-    drawFrontHair(p, v, bVertex, colors);
-    drawFeatures(p, colors);
+
+    // Draw Front Hair based on selection
+    if (hairStyles[style.hair] && hairStyles[style.hair].front) {
+      hairStyles[style.hair].front(p, v, bVertex, colors);
+    }
+
+    // Draw Features individually
+    drawEyebrows(p, colors, style.eyebrows);
+    drawNose(p, colors, style.nose);
+    drawMouth(p, colors, style.mouth);
+
     p.pop();
 
     p.pop(); // End Main Transform

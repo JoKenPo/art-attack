@@ -1,4 +1,4 @@
-export const drawEyes = (p, v, bVertex, colors, trackX, trackY) => {
+export const drawEyes_Default = (p, v, bVertex, colors, trackX, trackY) => {
   p.push();
 
   // 1. Sclera (White Part)
@@ -61,4 +61,27 @@ export const drawEyes = (p, v, bVertex, colors, trackX, trackY) => {
   p.line(76, 6, 78, -4);
 
   p.pop();
+};
+
+export const drawEyes_Round = (p, v, bVertex, colors, trackX, trackY) => {
+  p.push();
+  // Simple big round eyes
+  p.fill(colors.sclera);
+  p.stroke(0);
+  p.strokeWeight(5);
+
+  p.circle(-60, 30, 60);
+  p.circle(60, 30, 60);
+
+  p.fill(colors.pupil);
+  p.noStroke();
+  p.circle(-60 + trackX, 30 + trackY, 25);
+  p.circle(60 + trackX, 30 + trackY, 25);
+
+  p.pop();
+};
+
+export const eyesStyles = {
+  default: drawEyes_Default,
+  round: drawEyes_Round,
 };

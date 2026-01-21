@@ -67,41 +67,100 @@ export const drawHeadShape = (p, colors) => {
   p.pop();
 };
 
-export const drawFeatures = (p, colors) => {
-  // --- Eyebrows ---
+export const drawEyebrows = (p, colors, style = "default") => {
   p.fill(0);
   p.noStroke();
 
-  // Left Brow
-  p.push();
-  p.translate(-45, -15);
-  p.rotate(0.3);
-  p.ellipse(0, 0, 40, 18);
-  p.pop();
+  if (style === "default") {
+    // Left Brow
+    p.push();
+    p.translate(-45, -15);
+    p.rotate(0.3);
+    p.ellipse(0, 0, 40, 18);
+    p.pop();
 
-  // Right Brow
-  p.push();
-  p.translate(45, -15);
-  p.rotate(-0.3);
-  p.ellipse(0, 0, 40, 18);
-  p.pop();
+    // Right Brow
+    p.push();
+    p.translate(45, -15);
+    p.rotate(-0.3);
+    p.ellipse(0, 0, 40, 18);
+    p.pop();
+  } else if (style === "thin_arched") {
+    // Left Brow
+    p.push();
+    p.stroke(0);
+    p.strokeWeight(4);
+    p.noFill();
+    p.arc(-45, -25, 40, 20, p.PI, 0);
+    p.pop();
 
+    // Right Brow
+    p.push();
+    p.stroke(0);
+    p.strokeWeight(4);
+    p.noFill();
+    p.arc(45, -25, 40, 20, p.PI, 0);
+    p.pop();
+  } else if (style === "thick_straight") {
+    // Left Brow
+    p.push();
+    p.translate(-45, -20);
+    p.rectMode(p.CENTER);
+    p.rotate(0.1);
+    p.rect(0, 0, 45, 12, 5);
+    p.pop();
+
+    // Right Brow
+    p.push();
+    p.translate(45, -20);
+    p.rectMode(p.CENTER);
+    p.rotate(-0.1);
+    p.rect(0, 0, 45, 12, 5);
+    p.pop();
+  }
+};
+
+export const drawNose = (p, colors, style = "default") => {
   // --- Nose ---
   p.stroke(0);
   p.noFill();
   p.strokeWeight(5);
-  p.arc(0, 60, 20, 6, 0.2, p.PI - 0.2);
 
+  if (style === "default") {
+    p.arc(0, 60, 20, 6, 0.2, p.PI - 0.2);
+  } else if (style === "pointed") {
+    p.beginShape();
+    p.vertex(-5, 50);
+    p.vertex(0, 65);
+    p.vertex(5, 50);
+    p.endShape();
+  } else if (style === "button") {
+    p.arc(0, 55, 15, 10, 0, p.PI);
+  }
+};
+
+export const drawMouth = (p, colors, style = "default") => {
   // --- Mouth Area ---
-  p.noStroke();
-  p.fill(colors.earShadow);
-  p.arc(0, 100, 20, 10, 0, p.PI); // Lower lip
+  if (style === "default") {
+    p.noStroke();
+    p.fill(colors.earShadow);
+    p.arc(0, 100, 20, 10, 0, p.PI); // Lower lip
 
-  p.fill(colors.upperLipShadow);
-  p.arc(0, 88, 22, 10, p.PI, 0); // Upper lip shadow
+    p.fill(colors.upperLipShadow);
+    p.arc(0, 88, 22, 10, p.PI, 0); // Upper lip shadow
 
-  p.stroke(0);
-  p.strokeWeight(6);
-  p.noFill();
-  p.line(-20, 91, 20, 91); // Mouth line
+    p.stroke(0);
+    p.strokeWeight(6);
+    p.noFill();
+    p.line(-20, 91, 20, 91); // Mouth line
+  } else if (style === "small") {
+    p.fill(colors.earShadow);
+    p.noStroke();
+    p.circle(0, 95, 15);
+  } else if (style === "wide_smile") {
+    p.noFill();
+    p.stroke(0);
+    p.strokeWeight(6);
+    p.arc(0, 90, 50, 30, 0, p.PI);
+  }
 };

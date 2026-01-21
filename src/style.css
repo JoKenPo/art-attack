@@ -26,7 +26,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #c42a45; /* Match the background of the image */
+  background-color: #000; /* Match the background of the image */
 }
 
 canvas {
