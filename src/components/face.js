@@ -1,10 +1,13 @@
-export const drawEars = (p, v, bVertex, colors) => {
+export const drawEars = (p, v, bVertex, colors, size = "default") => {
   const headRadius = 250;
   const earX = headRadius / 2 - 5;
+
+  const scale = size === "small" ? 0.7 : 1;
 
   // Left Ear
   p.push();
   p.translate(-earX, 0);
+  p.scale(scale);
   p.fill(colors.skin);
   p.stroke(0);
   p.strokeWeight(7);
@@ -28,6 +31,7 @@ export const drawEars = (p, v, bVertex, colors) => {
   // Right Ear
   p.push();
   p.translate(earX, 0);
+  p.scale(scale);
   p.fill(colors.skin);
   p.stroke(0);
   p.strokeWeight(7);
@@ -49,14 +53,19 @@ export const drawEars = (p, v, bVertex, colors) => {
   p.pop();
 };
 
-export const drawHeadShape = (p, colors) => {
+export const drawHeadShape = (p, colors, shape = "circle") => {
   const headRadius = 250;
 
   // --- Face (Head) ---
   p.fill(colors.skin);
   p.stroke(0);
   p.strokeWeight(7);
-  p.circle(0, 0, headRadius);
+
+  if (shape === "oval") {
+    p.ellipse(0, 15, headRadius, 280);
+  } else {
+    p.circle(0, 0, headRadius);
+  }
 
   // --- Cheeks (Blush) ---
   p.push();
@@ -68,7 +77,7 @@ export const drawHeadShape = (p, colors) => {
 };
 
 export const drawEyebrows = (p, colors, style = "default") => {
-  p.fill(0);
+  p.fill(colors.hair || 0);
   p.noStroke();
 
   if (style === "default") {
@@ -116,6 +125,22 @@ export const drawEyebrows = (p, colors, style = "default") => {
     p.rectMode(p.CENTER);
     p.rotate(-0.1);
     p.rect(0, 0, 45, 12, 5);
+    p.pop();
+  } else if (style === "thicker_straight") {
+    // Left Brow
+    p.push();
+    p.translate(-45, -20);
+    p.rectMode(p.CENTER);
+    p.rotate(0.1);
+    p.rect(0, 0, 45, 18, 5); // Thicker height
+    p.pop();
+
+    // Right Brow
+    p.push();
+    p.translate(45, -20);
+    p.rectMode(p.CENTER);
+    p.rotate(-0.1);
+    p.rect(0, 0, 45, 18, 5); // Thicker height
     p.pop();
   }
 };
